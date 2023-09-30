@@ -1,0 +1,21 @@
+services:
+  web:
+    build: ./visitor-web
+    depends_on:
+      - redis
+    ports:
+      - "3000:80"
+    environment:
+      FLASK_DEBUG: "true"
+      WEBSOCKET_URL: "ws://demo.ex.net:8000/ws"
+  websocket:
+    build: ./websocket
+    depends_on:
+      - redis
+      - web
+    ports:
+      - "8000:8080"
+    environment:
+      WS_CONFIG: '{"origins": ["http://127.0.0.1:3000", "http://demo.ex.net:3000"],"addr":":8080"}' 
+  redis:
+    image: "redis:alpine"
